@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import "./header.css";
 import ai from "../src/ai.png";
-import Objectdetect from './ObjectDetection';
+// import Objectdetect from './ObjectDetection';
 
 const Header = () => {
   const navigate = useNavigate();

@@ -47,15 +47,5 @@ const contentContainerStyle = {
   alignItems: 'center',
 };
 
-const buttonStyle = {
-  backgroundColor: '#fff', // Background color of the button
-  border: 'none',
-  cursor: 'pointer',
-  padding: '5px 10px',
-  borderRadius: '5px',
-  marginLeft:'400px',
-};
-const statusStyle={
-    marginLeft:'600px',
-}
+
 export default Home1;

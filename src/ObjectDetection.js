@@ -1,7 +1,7 @@
 // Import dependencies
 import React, { useRef, useState, useEffect } from "react";
-import * as tf from "@tensorflow/tfjs";
 import * as cocossd from "@tensorflow-models/coco-ssd";
+import * as tf from '@tensorflow/tfjs';
 import Webcam from "react-webcam";
 import "./App.css";
 import { drawRect } from "./utilities";
@@ -14,50 +14,52 @@ const Objectdetect = () => {
 
   // Main function
   const runCoco = async () => {
-    const net = await cocossd.load();
-    console.log("COCO-SSD model loaded.");
-    setLoading(false);
-    //  Loop and detect objects
-    setInterval(() => {
-      detect(net);
-    }, 100);
+    try {
+      await tf.setBackend('webgl'); // Ensure WebGL backend is set
+      await tf.ready();
+      const net = await cocossd.load();
+      console.log("COCO-SSD model loaded.");
+      setLoading(false);
+      // Loop and detect objects
+      const intervalId = setInterval(() => {
+        detect(net);
+      }, 100);
+      return () => clearInterval(intervalId); // Cleanup interval on unmount
+    } catch (error) {
+      console.error("Error loading the model: ", error);
+    }
   };
 
   const detect = async (net) => {
     // Check if data is available
-    if (
-      webcamRef.current &&
-      webcamRef.current.video.readyState === 4
-    ) {
+    if (webcamRef.current && webcamRef.current.video.readyState === 4) {
       // Get Video Properties
       const video = webcamRef.current.video;
       const videoWidth = video.videoWidth;
       const videoHeight = video.videoHeight;
-  
+
       // Set video width
       webcamRef.current.video.width = videoWidth;
       webcamRef.current.video.height = videoHeight;
-  
+
       // Set canvas height and width
       canvasRef.current.width = videoWidth;
       canvasRef.current.height = videoHeight;
-  
+
       // Make Detections
       const obj = await net.detect(video);
-  
+
       // Draw mesh
       const ctx = canvasRef.current.getContext("2d");
-      drawRect(obj, ctx); 
+      drawRect(obj, ctx);
     }
   };
-  
 
   useEffect(() => {
     runCoco();
-  }, []);
+  });
 
   return (
-    
     <div>
       <Navbar />
       <header className="App-header">
@@ -67,7 +69,7 @@ const Objectdetect = () => {
           <>
             <Webcam
               ref={webcamRef}
-              muted={true} 
+              muted={true}
               style={{
                 position: "absolute",
                 marginLeft: "auto",
@@ -80,7 +82,6 @@ const Objectdetect = () => {
                 height: 480,
               }}
             />
-
             <canvas
               ref={canvasRef}
               style={{
